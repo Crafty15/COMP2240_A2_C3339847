@@ -3,6 +3,9 @@
 //Programmer: Liam Craft - c3339847
 //Date: 10/10/2020
 
+import java.util.concurrent.Semaphore;
+import java.util.ArrayList;
+
 public class P1 {
 
 	public static void main(String[] args) {
@@ -11,13 +14,34 @@ public class P1 {
 			System.out.println("Error: please check command line argument");
 			return;
 		}
-		//create farmer objects as individual threads
+		ArrayList<Farmer> nFarmers = new ArrayList<Farmer>();
+		ArrayList<Farmer> sFarmers = new ArrayList<Farmer>();
 		
 		//TEST
 		int[] nums = Farmer.readFile(args[0]);
 		for (int num : nums) {
 			System.out.println(num);
 		}
+		//create bridge (semaphore)
+//		Semaphore bridge = new Semaphore(0, false);
+		
+		//create farmer objects as individual threads
+		//Create north farmers
+//		for(int i = 0; i < nums[0]; i++) {
+//			nFarmers.add(new Farmer("N_Farmer" + i, true, 0, bridge));
+//		}
+//		//Create south farmers
+//		for(int i = 0; i < nums[0]; i++) {
+//			sFarmers.add(new Farmer("S_Farmer" + i, true, 0, bridge));
+//			
+//		}
+//		//run the farmers TEST....
+//		for(int i = 0; i < nFarmers.size(); i++) {
+//			Thread t = new Thread();
+//		}
+//		for(int i = 0; i < sFarmers.size(); i++) {
+//			sFarmers.get(i).run();
+//		}
 		
 	}
 	

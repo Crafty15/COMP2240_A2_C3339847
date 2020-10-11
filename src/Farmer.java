@@ -4,11 +4,17 @@
 //Date: 10/10/2020
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.io.*;
 
 public class Farmer implements Runnable {
 	//private static final int DIST_STEPS = 20; NOTE: Change to the length of the bridge
 	private boolean goingNorth = false;
+	
+	//
+	private String name = "";
+	private int steps = 0;
+	private Semaphore bridgeSem;
 	
 	//default constructor
 	//Preconditions:
@@ -20,15 +26,29 @@ public class Farmer implements Runnable {
 	//constructor
 	//Preconditions:
 	//Postconditions:
-	public Farmer(boolean newGoingNorth) {
-		// TODO Auto-generated constructor stub
+	public Farmer(String newName, boolean newGoingNorth, int newSteps, Semaphore newBridgeSem) {
+		this.name = newName;
 		this.goingNorth = newGoingNorth;
+		this.steps = newSteps;
+		this.bridgeSem = newBridgeSem;
 	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-
+		//RUN TEST
+		System.out.println("RUN TEST: " + this.name + " running.....");
+		//Thread sleep (implement after 5 steps)
+		try {
+			System.out.println(this.name + "acquiring sem.....");
+			bridgeSem.acquire();
+			TimeUnit.MILLISECONDS.sleep(2);
+			System.out.println(this.name + "releasing sem sem.....");
+			bridgeSem.release();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("RUN TEST: " + this.name + " finished.....");
 	}
 	
 	
@@ -41,6 +61,7 @@ public class Farmer implements Runnable {
 		try {
 			FileReader fRead = new FileReader(fileName);
 			BufferedReader bRead = new BufferedReader(fRead);
+			//NOTE: The input file for this program should only be a single line. This will simply ignore the rest, if any.
 			input = bRead.readLine();
 			//System.out.println("file read test: " + newLine);
 			bRead.close();
