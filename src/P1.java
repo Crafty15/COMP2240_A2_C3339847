@@ -24,25 +24,27 @@ public class P1 {
 		}
 		//create bridge (semaphore)
 //		Semaphore bridge = new Semaphore(0, false);
+		//create bridge object
+		Bridge b = new Bridge();
 		
 		//create farmer objects as individual threads
 		//Create north farmers
-//		for(int i = 0; i < nums[0]; i++) {
-//			nFarmers.add(new Farmer("N_Farmer" + i, true, 0, bridge));
-//		}
-//		//Create south farmers
-//		for(int i = 0; i < nums[0]; i++) {
-//			sFarmers.add(new Farmer("S_Farmer" + i, true, 0, bridge));
-//			
-//		}
+		for(int i = 0; i < nums[0]; i++) {
+			nFarmers.add(new Farmer("N_Farmer" + i, true, 0, b));
+		}
+		//Create south farmers
+		for(int i = 0; i < nums[0]; i++) {
+			sFarmers.add(new Farmer("S_Farmer" + i, false, 0, b));
+			
+		}
 //		//run the farmers TEST....
-//		for(int i = 0; i < nFarmers.size(); i++) {
-//			Thread t = new Thread();
-//		}
-//		for(int i = 0; i < sFarmers.size(); i++) {
-//			sFarmers.get(i).run();
-//		}
-		
+		for(int i = 0; i < nFarmers.size(); i++) {
+			nFarmers.get(i).start();
+		}
+		for(int i = 0; i < sFarmers.size(); i++) {
+			sFarmers.get(i).start();
+		}
+	
 	}
 	
 	

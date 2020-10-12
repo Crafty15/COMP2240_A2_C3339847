@@ -3,8 +3,8 @@
 //Programmer: Liam Craft - c3339847
 //Date: 10/10/2020
 
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
+//import java.util.concurrent.Semaphore;
+//import java.util.concurrent.TimeUnit;
 import java.io.*;
 
 public class Farmer implements Runnable {
@@ -14,7 +14,9 @@ public class Farmer implements Runnable {
 	//
 	private String name = "";
 	private int steps = 0;
-	private Semaphore bridgeSem;
+//	private Semaphore bridgeSem;
+	private Thread t;
+	private Bridge bridge;
 	
 	//default constructor
 	//Preconditions:
@@ -26,31 +28,80 @@ public class Farmer implements Runnable {
 	//constructor
 	//Preconditions:
 	//Postconditions:
-	public Farmer(String newName, boolean newGoingNorth, int newSteps, Semaphore newBridgeSem) {
+	public Farmer(String newName, boolean newGoingNorth, int newSteps, Bridge newBridge) {
 		this.name = newName;
 		this.goingNorth = newGoingNorth;
 		this.steps = newSteps;
-		this.bridgeSem = newBridgeSem;
+		//this.bridgeSem = newBridgeSem;
+		this.bridge = newBridge;
 	}
-
+	//*****Getters*****
+	
+	public String getDirection() {
+		if(this.goingNorth) {
+			return "North";
+		}
+		else {
+			return "South";
+		}
+	}
+	
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public int getSteps() {
+		return this.steps;
+	}
+	
+	//*****Setters*****
+	public void incStep() {
+		this.steps++;
+	}
+	
+	public void swapDirection() {
+		if(this.goingNorth) {
+			this.goingNorth = false;
+		}
+		else {
+			this.goingNorth = true;
+		}
+	}
+	
+	//*****Thread related*****
+	
 	@Override
 	public void run() {
 		//RUN TEST
 		System.out.println("RUN TEST: " + this.name + " running.....");
+		//Call to bridge , where the semaphore will be acquired and the farmers steps will be incremented
+		//passes this farmer object to the bridge that was passed as a constructor arg.
+		this.bridge.cross(this);
+		//NOTE:Old attempt. Seems to hang on sem acquire.
 		//Thread sleep (implement after 5 steps)
-		try {
-			System.out.println(this.name + "acquiring sem.....");
-			bridgeSem.acquire();
-			TimeUnit.MILLISECONDS.sleep(2);
-			System.out.println(this.name + "releasing sem sem.....");
-			bridgeSem.release();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			System.out.println(this.name + "acquiring sem.....");
+//			bridgeSem.acquire();
+//			//TimeUnit.MILLISECONDS.sleep(2);
+//			System.out.println(this.name + "releasing sem sem.....");
+//			bridgeSem.release();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		System.out.println("RUN TEST: " + this.name + " finished.....");
 	}
 	
+	public void start() {
+		System.out.println("Starting thread: " + this.name);
+		if(t == null) {
+			t = new Thread(this, name);
+			t.start();
+		}
+	}
+	
+	//*****Utility*****
 	
 	//readFile(): read text file that specifies the number of farmer objects to create
 	//Preconditions: None
