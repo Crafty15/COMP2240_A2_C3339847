@@ -1,5 +1,5 @@
 //File: P1.java
-//Purpose:	Main class for part one of assignment 2 - Bridge crossing problem
+//Purpose:	Main class for part ONE of assignment 2 - Bridge crossing problem
 //Programmer: Liam Craft - c3339847
 //Date: 10/10/2020
 
