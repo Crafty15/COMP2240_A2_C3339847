@@ -14,7 +14,6 @@ public class Farmer implements Runnable {
 	//
 	private String name = "";
 	private int steps = 0;
-//	private Semaphore bridgeSem;
 	private Thread t;
 	private Bridge bridge;
 	
