@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Bridge {
 	private static final int LENGTH = 20;
-	private Semaphore bridgePermit;
+	private final Semaphore bridgePermit;
 	private int neon = 0;
 	
 	public Bridge() {

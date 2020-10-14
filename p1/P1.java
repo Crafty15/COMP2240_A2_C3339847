@@ -30,11 +30,11 @@ public class P1 {
 		//create farmer objects as individual threads
 		//Create north farmers
 		for(int i = 0; i < nums[0]; i++) {
-			nFarmers.add(new Farmer("N_Farmer" + i + 1, true, 0, b));
+			nFarmers.add(new Farmer("N_Farmer" + (i + 1), true, 0, b));
 		}
 		//Create south farmers
 		for(int i = 0; i < nums[0]; i++) {
-			sFarmers.add(new Farmer("S_Farmer" + i + 1, false, 0, b));
+			sFarmers.add(new Farmer("S_Farmer" + (i + 1), false, 0, b));
 			
 		}
 //		//run the farmers TEST....
