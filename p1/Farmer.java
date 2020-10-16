@@ -73,7 +73,7 @@ public class Farmer implements Runnable {
 	@Override
 	public void run() {
 		//RUN TEST
-		System.out.println("RUN TEST: " + this.name + " running.....");
+		//System.out.println("RUN TEST: " + this.name + " running.....");
 		//Call to bridge , where the semaphore will be acquired and the farmers steps will be incremented
 		//passes this farmer object to the bridge that was passed as a constructor arg.
 		this.bridge.cross(this);
@@ -89,7 +89,7 @@ public class Farmer implements Runnable {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		System.out.println("RUN TEST: " + this.name + " finished.....");
+		//System.out.println("RUN TEST: " + this.name + " finished.....");
 	}
 	
 	public void start() {

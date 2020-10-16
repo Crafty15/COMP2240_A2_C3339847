@@ -8,6 +8,8 @@ import java.io.*;
 
 public class Customer implements Runnable {
 
+	
+	//NOTE: Can probably get rid of the Restaurant passing arg???
 	//****class variables****
 	private int arrivalTime;
 	private String name;
@@ -136,6 +138,9 @@ public class Customer implements Runnable {
 	public void setRunning(boolean newIsRunning) {
 		this.isRunning = newIsRunning;
 	}
+	public void decEatTime() {
+		this.eatTime--;
+	}
 //	public static void setGlobalTime(int newGlobalTime) {
 //		globalTime = newGlobalTime;
 //	}
@@ -152,21 +157,24 @@ public class Customer implements Runnable {
 	@Override
 	public void run() {
 		//RUN TEST
+		//TEST OUTPUT
 		System.out.println("RUN TEST: " + this.name + " running.....");
 //		while(this.arrivalTime < Restaurant.getGlobalTime()) {
 //			//wait? How to do this better
 //			System.out.println(this.name + " waiting.....");
 //		}
-		this.restaurant.takeSeat(this);
+		Restaurant.takeSeat(this);
+		//TEST OUTPUT
+		System.out.println("RUN TEST: " + this.name + " ending.....");
 
 	}
 	
 	//Preconditions:
 	//Postconditions:
-	public void start() {
-		
+	public void start() {	
 		if(t == null) {
 			t = new Thread(this, name);
+			//TEST OUTPUT
 			System.out.println("Starting thread: " + t.getName());
 			t.start();
 		}

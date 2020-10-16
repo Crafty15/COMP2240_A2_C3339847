@@ -19,10 +19,10 @@ public class P2 {
 		ArrayList<Customer> cList = Customer.getCustList(args[0], r);
 		
 		//TEST OUTPUT
-		//System.out.println("args = " + args[0]);
+//		System.out.println("args = " + args[0]);
 		
 		//start all customers
-		//Customer.startCustomerList(cList);
+//		Customer.startCustomerList(cList);
 //		Customer test = cList.get(0);
 //		Customer test1 = cList.get(1);
 //		Customer test2 = cList.get(2);

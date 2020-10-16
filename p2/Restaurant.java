@@ -7,64 +7,84 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class Restaurant {
-	private final Semaphore seat;
-	private int custTime;						//Flag that is set once the seats become completely full, blocking any other customers from entering until the seats are completely empty and a clean has been done.
+	private static Semaphore seat;
+	private static final int MAXNUM = 5;
+	//private static Customer cleaner = new Customer();
+	//private int custTime;						//Flag that is set once the seats become completely full, blocking any other customers from entering until the seats are completely empty and a clean has been done.
 	private static int globalTime = 0; 
 	private static boolean needsClean = false;
 	
 	public Restaurant() {
 		//semaphore with 5 permits - NOTE: use seat.availablePermits() OR .getQueueLength() to check if full
-		this.seat = new Semaphore(5, true);
-		this.custTime = 0;
+		seat = new Semaphore(MAXNUM, true);
+		//this.custTime = 0;
 	}
 	
-	public void takeSeat(Customer c) {
+	public static void takeSeat(Customer c) {
 		//boolean needsClean = false;
 		
 		//trigger something if all 5 seats become full. Only releases when all seats are empty and a 5 unit clean time has passed
 		if(needsClean) {
-			try {
-				c.wait();
-				System.out.println(c.getName() + ": waiting");
-			} catch (InterruptedException e) {
-				System.out.println("Interrupted Exception in Restaurant.takeSeat() - Waiting for permit");
-				e.printStackTrace();
-			}
+//			TEST OUTPUT
+			System.out.println("DRAINING PERMITS");
+			seat.drainPermits();
+//			try {
+//				//If the cleaning flag is tripped, the threads will wait here....i think/hope
+//				seat.drainPermits();
+//				//c.wait();
+//				//TEST OUTPUT
+//				System.out.println(c.getName() + ": waiting");
+//			} catch (Exception e) {
+//				System.out.println("Interrupted Exception in Restaurant.takeSeat() - Waiting for permit");
+//				e.printStackTrace();
+//			}
 		}
-		//There are spare seats, take one
+		//if there are spare seats, take one, else wait
 		try {
 			seat.acquire();
-			//TEST OUTPUT
-			System.out.println("Available permits start = "+seat.availablePermits());
-			//log start time
-			c.setRunning(true);
-			c.setSeatedTime(globalTime);
 			//check number of permits (seats) and set needsClean if they are full.
 			if(seat.availablePermits() == 0) {
+				//TEST OUTPUT
+				System.out.println("Cleaning needed");
 				needsClean = true;
 			}
-			//do the things - count or whatever - remember to log global time
-			while(custTime < c.getEatTime()) {
-				custTime++;
+			//TEST OUTPUT
+			System.out.println(c.getName() + " TAKES a permit. Permits left = "+seat.availablePermits());
+			//log start time
+			c.setRunning(true);
+			c.setSeatedTime(globalTime);	
+			
+			//do the things - count or whatever - remember to log global time			
+			while(c.getEatTime() > 0) {
+				//TEST OUTPUT
+				System.out.println("Cust " + c.getName() + " is eating");
+				c.decEatTime();
 				globalTime++;
 			}
 			seat.release();
-			c.setLeaveTime(globalTime);
-			c.setFinished(true);
-			//Only reset needsClean if seats are completely empty - clean, then notifyAll(), to wake the waiting threads
-			//check the flag
 			//TEST OUTPUT
-			System.out.println("Available permits end = "+seat.availablePermits());
-			if(needsClean) {
+			System.out.println("Cust " + c.getName() + " RETURNS PERMIT. Now available = " +seat.availablePermits());
+			//c.setLeaveTime(globalTime);
+			c.setFinished(true);
+				
+			//Only reset needsClean if seats are completely empty - clean, then notifyAll???, to wake the waiting threads
+			//check the flag
+			
+			//TEST OUTPUT
+			//System.out.println("Available permits = "+seat.availablePermits());
+			if(needsClean && seat.availablePermits() == MAXNUM) {
 				//check if they are empty now that current customer has left
 				
-				if(seat.availablePermits() == 5) {
-					//reset flag, notifyAll(), clean takes 5 time units
-					needsClean = false;
-					seat.notifyAll();
-					//clean
-					globalTime += 5;
-				}
+				//reset flag, release all permits, clean takes 5 time units
+				needsClean = false;
+				//NOTE: use notify all?
+				//seat.release(MAXNUM);
+				//c.notifyAll();
+				
+				//clean
+				globalTime += 5;
+				//TEST OUTPUT
+				System.out.println("CLEANING COMPLETE");
 			}
 			
 			
