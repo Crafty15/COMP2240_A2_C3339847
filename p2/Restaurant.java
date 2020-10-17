@@ -4,111 +4,117 @@
 //Date: 13/10/2020
 
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 public class Restaurant {
-	private static Semaphore seat;
-	private static final int MAXNUM = 5;
-	//private static Customer cleaner = new Customer();
-	//private int custTime;						//Flag that is set once the seats become completely full, blocking any other customers from entering until the seats are completely empty and a clean has been done.
-	private static int globalTime = 0; 
-	private static boolean needsClean = false;
+	private Semaphore seat;
+	private Semaphore timeControl;
+	private final int MAXNUM = 5;
+	private int globalTime = 0; 
+	private boolean needsClean;
+	private int custsToLeave;
+
 	
 	public Restaurant() {
 		//semaphore with 5 permits - NOTE: use seat.availablePermits() OR .getQueueLength() to check if full
 		seat = new Semaphore(MAXNUM, true);
+		timeControl = new Semaphore(100, true);
+		needsClean = false;
+		custsToLeave = -1;
+		//pauseTime = false;
 		//this.custTime = 0;
+		//globalTimeStamp = new Instant();
 	}
 	
-	public static void takeSeat(Customer c) {
-		//boolean needsClean = false;
-		
-		//trigger something if all 5 seats become full. Only releases when all seats are empty and a 5 unit clean time has passed
-		if(needsClean) {
-//			TEST OUTPUT
-			System.out.println("DRAINING PERMITS");
-			seat.drainPermits();
-//			try {
-//				//If the cleaning flag is tripped, the threads will wait here....i think/hope
-//				seat.drainPermits();
-//				//c.wait();
-//				//TEST OUTPUT
-//				System.out.println(c.getName() + ": waiting");
-//			} catch (Exception e) {
-//				System.out.println("Interrupted Exception in Restaurant.takeSeat() - Waiting for permit");
-//				e.printStackTrace();
-//			}
+	public void run(Customer c) {
+		boolean pauseTime = false;
+		//while a customer has not left
+		while(c.getLeaveTime() == -1) {
+			try {
+				timeControl.acquire();
+				pauseTime = true;
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			//if customer is not running(seated)
+			if(!c.isSeated()) {
+				//try to get a seat
+				try {
+					if(seat.availablePermits() == 0) {
+						timeControl.release();
+						pauseTime = false;
+					}
+					//acquire seat permit
+					seat.acquire();
+					if(!pauseTime) {
+						timeControl.acquire();
+						pauseTime = true;
+					}
+					//check if seats are full - set boolean flag if needs a clean
+					if(seat.availablePermits() == 0) {
+						needsClean = true;
+						custsToLeave = 5;
+					}
+					c.setSeated(true);
+					c.setSeatedTime(globalTime);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(globalTime >= (c.getSeatedTime() + c.getEatTime())) {
+				//release if no clean is required
+				if(!needsClean) {
+					seat.release();
+				}				
+				c.setLeaveTime(c.getSeatedTime() + c.getEatTime());
+				c.setFinished(true);
+				custsToLeave--;
+				
+			}
+			timeControl.release();
+			pauseTime = false;		
 		}
-		//if there are spare seats, take one, else wait
-		try {
-			seat.acquire();
-			//check number of permits (seats) and set needsClean if they are full.
-			if(seat.availablePermits() == 0) {
-				//TEST OUTPUT
-				System.out.println("Cleaning needed");
-				needsClean = true;
-			}
-			//TEST OUTPUT
-			System.out.println(c.getName() + " TAKES a permit. Permits left = "+seat.availablePermits());
-			//log start time
-			c.setRunning(true);
-			c.setSeatedTime(globalTime);	
-			
-			//do the things - count or whatever - remember to log global time			
-			while(c.getEatTime() > 0) {
-				//TEST OUTPUT
-				System.out.println("Cust " + c.getName() + " is eating");
-				c.decEatTime();
-				globalTime++;
-			}
-			seat.release();
-			//TEST OUTPUT
-			System.out.println("Cust " + c.getName() + " RETURNS PERMIT. Now available = " +seat.availablePermits());
-			//c.setLeaveTime(globalTime);
-			c.setFinished(true);
-				
-			//Only reset needsClean if seats are completely empty - clean, then notifyAll???, to wake the waiting threads
-			//check the flag
-			
-			//TEST OUTPUT
-			//System.out.println("Available permits = "+seat.availablePermits());
-			if(needsClean && seat.availablePermits() == MAXNUM) {
-				//check if they are empty now that current customer has left
-				
-				//reset flag, release all permits, clean takes 5 time units
-				needsClean = false;
-				//NOTE: use notify all?
-				//seat.release(MAXNUM);
-				//c.notifyAll();
-				
-				//clean
-				globalTime += 5;
-				//TEST OUTPUT
-				System.out.println("CLEANING COMPLETE");
-			}
-			
-			
-		} catch (InterruptedException e) {
-			System.out.println("Interrupted Exception in Restaurant.takeSeat() - Acquiring permit");
-			e.printStackTrace();
-		}
-
 
 	}
 	
 	//****Getters****
-	public static int getGlobalTime() {
+	public int getGlobalTime() {
 		return globalTime;
 	}
 	
+	public boolean needsClean() {
+		return this.needsClean;
+	}
+	public Semaphore getTimeControl() {
+		return this.timeControl;
+	}
+	
+	public Semaphore getSeatSem() {
+		return this.seat;
+	}
+	
+	public int getCustsToLeave() {
+		return this.custsToLeave;
+	}
+	
 	//****Setters****
-	public static void setGlobalTime(int newGlobalTime) {
+	public void setGlobalTime(int newGlobalTime) {
 		globalTime = newGlobalTime;
 	}
-	public static void incGlobalTime() {
+	public void incGlobalTime() {
 		globalTime++;
 	}	
-	public static void incGlobalTime(int incAmount) {
+	public void incGlobalTime(int incAmount) {
 		globalTime += incAmount;
+	}
+	public void setNeedsClean(boolean newNeedsClean) {
+		this.needsClean = newNeedsClean;
+	}
+	public void setCustsToLeave(int newCustsToLeave) {
+		this.custsToLeave = newCustsToLeave;
+	}
+	public void decCustsToLeave() {
+		custsToLeave--;
 	}
 }

@@ -6,7 +6,7 @@
 import java.util.ArrayList;
 
 public class P2 {
-
+	private static int globalTime = 0;
 	public static void main(String[] args) {
 		//args for file name
 		if(args.length != 1) {
@@ -17,33 +17,49 @@ public class P2 {
 		Restaurant r = new Restaurant();
 		//create list of customers, include the restaurant object
 		ArrayList<Customer> cList = Customer.getCustList(args[0], r);
-		
-		//TEST OUTPUT
-//		System.out.println("args = " + args[0]);
-		
-		//start all customers
-//		Customer.startCustomerList(cList);
-//		Customer test = cList.get(0);
-//		Customer test1 = cList.get(1);
-//		Customer test2 = cList.get(2);
-//		test.start();
-//		test1.start();
-//		test2.start();
-		for(int i = 0; i < cList.size(); i++) {
-			//System.out.println(cList.get(i).toString());
-			cList.get(i).start();
-		}
+
+		//NOTE: try to implement the counter here. 
+		//This will run independently, until all threads complete
 		while(!Customer.checkAllFinished(cList)) {
-			//wait?
+			//loop through and start customer threads on their arrival time
+			for(int i = 0; i < cList.size(); i++) {
+				Customer c = cList.get(i);
+				if(c.getArrivalTime() == r.getGlobalTime()) {
+					c.start();
+				}
+			}
+			
+			try {
+				//trash loop for sync
+				while(r.getTimeControl().availablePermits() != 100) {
+					System.out.print("");
+					Thread.sleep(1);
+				}
+				Thread.sleep(1);			
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//check if cleaning is required
+			//if no clean required - inc time normally
+			if(!r.needsClean() || r.getCustsToLeave() != 0) {
+				r.incGlobalTime();
+			}
+			else {			
+				//represents cleaning time
+				r.incGlobalTime(5);
+				//release seats
+				r.setNeedsClean(false);
+				r.getSeatSem().release(5);
+				//System.out.println("all cust done = " + );
+			}
 		}
-		//NOTE: 14/10/2020 - Global time is not implementation is not correct, 
-		//this dictates when other threads start, so needs to be re-designed.
-		//
-//		while(!test.isFinished() && !test1.isFinished()&& !test2.isFinished()) {
-//			
-//		}
+
 		System.out.println(Customer.getReport(cList));
 		
+	}
+	public static int getGlobalTime() {
+		return globalTime;
 	}
 
 }

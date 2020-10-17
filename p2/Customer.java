@@ -19,7 +19,7 @@ public class Customer implements Runnable {
 	private Restaurant restaurant;
 	private Thread t;
 	private boolean isFinished;
-	private boolean isRunning;
+	private boolean isSeated;
 //	private static int globalTime = 0;
 	
 	
@@ -31,11 +31,11 @@ public class Customer implements Runnable {
 		this.arrivalTime = 0;
 		this.name = "";
 		this.eatTime = 0;
-		this.leaveTime = 0;
+		this.leaveTime = -1;
 		this.seatedTime = 0;
 		this.restaurant = new Restaurant();
 		this.isFinished = false;
-		this.isRunning = false;
+		this.isSeated = false;
 	}
 	
 	//Constructor 1
@@ -45,11 +45,11 @@ public class Customer implements Runnable {
 		this.arrivalTime = newArrivalTime;
 		this.name = newName;
 		this.eatTime = newEatTime;
-		this.leaveTime = 0;
+		this.leaveTime = -1;
 		this.seatedTime = 0;
 		this.restaurant = new Restaurant();
 		this.isFinished = false;
-		this.isRunning = false;
+		this.isSeated = false;
 	}	
 	
 	//Constructor 2
@@ -59,11 +59,11 @@ public class Customer implements Runnable {
 		this.arrivalTime = newArrivalTime;
 		this.name = newName;
 		this.eatTime = newEatTime;
-		this.leaveTime = 0;
+		this.leaveTime = -1;
 		this.seatedTime = 0;
 		this.restaurant = newRestaurant;
 		this.isFinished = false;
-		this.isRunning = false;
+		this.isSeated = false;
 	}
 	
 
@@ -71,6 +71,10 @@ public class Customer implements Runnable {
 	//****Getters****
 	public int getArrivalTime() {
 		return this.arrivalTime;
+	}
+	
+	public int getSeatedTime() {
+		return this.seatedTime;
 	}
 	
 	public String getName() {
@@ -87,8 +91,11 @@ public class Customer implements Runnable {
 	public boolean isFinished() {
 		return this.isFinished;
 	}
-	public boolean isRunning() {
-		return this.isRunning;
+	public boolean isSeated() {
+		return this.isSeated;
+	}
+	public Restaurant getRestaurant() {
+		return this.restaurant;
 	}
 //	public static int getGlobalTime() {
 //		return globalTime;
@@ -106,7 +113,7 @@ public class Customer implements Runnable {
 	public static boolean checkAllRunning(ArrayList<Customer> cList) {
 		boolean result = true;
 		for(int i = 0; i < cList.size(); i++) {
-			if(cList.get(i).isRunning == false) {
+			if(cList.get(i).isSeated == false) {
 				result = false;
 			}
 		}
@@ -114,16 +121,17 @@ public class Customer implements Runnable {
 	}
 	
 	//Start list of customers as per their arrival time
-	public static void startCustomerList(ArrayList<Customer> cList) {
-		while(!checkAllRunning(cList)) {
-			for(int i = 0; i < cList.size(); i++) {
-				Customer c = cList.get(i);
-				if(c.getArrivalTime() >= Restaurant.getGlobalTime()) {
-					c.start();
-				}
-			}
-		}
-	}
+//	public static void startCustomerList(ArrayList<Customer> cList) {
+//		while(!checkAllRunning(cList)) {
+//			for(int i = 0; i < cList.size(); i++) {
+//				Customer c = cList.get(i);
+//				Restaurant r = cList.get(i).getRestaurant();
+//				if(c.getArrivalTime() >= r.getGlobalTime()) {
+//					c.start();
+//				}
+//			}
+//		}
+//	}
 	
 	//****Setters****
 	public void setLeaveTime(int newLeaveTime) {
@@ -135,37 +143,23 @@ public class Customer implements Runnable {
 	public void setFinished(boolean newIsFinished) {
 		this.isFinished = newIsFinished;
 	}
-	public void setRunning(boolean newIsRunning) {
-		this.isRunning = newIsRunning;
+	public void setSeated(boolean newIsRunning) {
+		this.isSeated = newIsRunning;
 	}
 	public void decEatTime() {
 		this.eatTime--;
-	}
-//	public static void setGlobalTime(int newGlobalTime) {
-//		globalTime = newGlobalTime;
-//	}
-//	public static void incGlobalTime() {
-//		globalTime++;
-//	}	
-//	public static void incGlobalTime(int incAmount) {
-//		globalTime += incAmount;
-//	}
-	
+	}	
 	
 	//Preconditions:
 	//Postconditions:
 	@Override
 	public void run() {
 		//RUN TEST
-		//TEST OUTPUT
-		System.out.println("RUN TEST: " + this.name + " running.....");
-//		while(this.arrivalTime < Restaurant.getGlobalTime()) {
-//			//wait? How to do this better
-//			System.out.println(this.name + " waiting.....");
-//		}
-		Restaurant.takeSeat(this);
-		//TEST OUTPUT
-		System.out.println("RUN TEST: " + this.name + " ending.....");
+//		//TEST OUTPUT
+//		System.out.println("RUN TEST: " + this.name + " running.....");
+		this.getRestaurant().run(this);
+//		//TEST OUTPUT
+//		System.out.println("RUN TEST: " + this.name + " ending.....");
 
 	}
 	
@@ -249,16 +243,16 @@ public class Customer implements Runnable {
 		return result;
 	}
 	
-	
+	//EXAMPLE FORMAT
+//	System.out.format("%-11s%-12s%-8s%-6s%n", "Customer", "Arrives", "Seats", "Leaves");
+//	for (int i = 0; i < customerList.size(); i++) {
+//		Customer iter = customerList.get(i).getCustomer();
+//		System.out.format("%-11s%-12d%-8d%-6d%n", iter.getId(), iter.getArrivalTime(), iter.getSeatedTime(), iter.getLeavingTime());
+//	}	
 
 	//getReport() - returns a formatted string of the entire run
 	public static String getReport(ArrayList<Customer> cList) {
-		//EXAMPLE FORMAT
-//		System.out.format("%-11s%-12s%-8s%-6s%n", "Customer", "Arrives", "Seats", "Leaves");
-//		for (int i = 0; i < customerList.size(); i++) {
-//			Customer iter = customerList.get(i).getCustomer();
-//			System.out.format("%-11s%-12d%-8d%-6d%n", iter.getId(), iter.getArrivalTime(), iter.getSeatedTime(), iter.getLeavingTime());
-//		}
+
 		String msg = "Customer  Arrives  Sits  Leaves\n";
 		for(int i = 0; i < cList.size(); i++) {
 			msg += cList.get(i).toString() + "\n";
