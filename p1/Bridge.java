@@ -10,7 +10,10 @@ public class Bridge {
 	private static final int LENGTH = 20;
 	private final Semaphore bridgePermit;
 	private int neon = 0;
-	
+
+	//Constructor
+	//Preconditions: None
+	//Postconditions: 
 	public Bridge() {
 		//this.neon = 0;
 		this.bridgePermit = new Semaphore(1, true);
@@ -45,22 +48,25 @@ public class Bridge {
 		}
 	}
 	
-	//getters
+	//****Getters****
 	
+	//getNeon() - 
 	//Preconditions:
 	//Postconditions:
 	public int getNeon() {
 		return this.neon;
 	}
 	
-	//setters
+	//****Setters****
 	
+	//setNeon() - 
 	//Preconditions:
 	//Postconditions:
 	public void setNeon(int newNeon) {
 		this.neon = newNeon;
 	}
 	
+	//incNeon() - 
 	//Preconditions:
 	//Postconditions:
 	public void incNeon() {

@@ -2,6 +2,8 @@
 //Purpose:	Main class for part ONE of assignment 2 - Bridge crossing problem
 //Programmer: Liam Craft - c3339847
 //Date: 10/10/2020
+//NOTE: This program takes a relative filepath to a text file as a command line argument.
+//
 
 //import java.util.concurrent.Semaphore;
 import java.util.ArrayList;
@@ -14,16 +16,14 @@ public class P1 {
 			System.out.println("Error: please check command line argument");
 			return;
 		}
+		//north and south farmer lists
 		ArrayList<Farmer> nFarmers = new ArrayList<Farmer>();
 		ArrayList<Farmer> sFarmers = new ArrayList<Farmer>();
 		
-		//TEST
+		//get the farmer values as an int array using the command line 
+		//args and the farmer classes readFile utility method.
 		int[] nums = Farmer.readFile(args[0]);
-		for (int num : nums) {
-			System.out.println(num);
-		}
-		//create bridge (semaphore)
-//		Semaphore bridge = new Semaphore(0, false);
+		
 		//create bridge object
 		Bridge b = new Bridge();
 		
@@ -37,7 +37,7 @@ public class P1 {
 			sFarmers.add(new Farmer("S_Farmer" + (i + 1), false, 0, b));
 			
 		}
-//		//run the farmers TEST....
+		//run the farmer threads
 		for(int i = 0; i < nFarmers.size(); i++) {
 			nFarmers.get(i).start();
 		}

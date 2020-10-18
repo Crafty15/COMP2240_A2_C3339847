@@ -8,23 +8,21 @@
 import java.io.*;
 
 public class Farmer implements Runnable {
-	//private static final int DIST_STEPS = 20; NOTE: Change to the length of the bridge
+
 	private boolean goingNorth = false;
-	
-	//
 	private String name = "";
 	private int steps = 0;
 	private Thread t;
 	private Bridge bridge;
 	
-	//default constructor
+	//Default Constructor
 	//Preconditions:
 	//Postconditions:
 	public Farmer() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	//constructor
+	//Constructor
 	//Preconditions:
 	//Postconditions:
 	public Farmer(String newName, boolean newGoingNorth, int newSteps, Bridge newBridge) {
@@ -36,6 +34,9 @@ public class Farmer implements Runnable {
 	}
 	//*****Getters*****
 	
+	//getDirection() - 
+	//Preconditions:
+	//Postconditions:
 	public String getDirection() {
 		if(this.goingNorth) {
 			return "North";
@@ -45,20 +46,32 @@ public class Farmer implements Runnable {
 		}
 	}
 	
-	
+	//getName() - 
+	//Preconditions:
+	//Postconditions:
 	public String getName() {
 		return this.name;
 	}
-	
+
+	//getSteps() - 
+	//Preconditions:
+	//Postconditions:
 	public int getSteps() {
 		return this.steps;
 	}
 	
 	//*****Setters*****
+	
+	//incStep() - 
+	//Preconditions:
+	//Postconditions:
 	public void incStep() {
 		this.steps++;
 	}
-	
+
+	//swapDirection() - 
+	//Preconditions:
+	//Postconditions:
 	public void swapDirection() {
 		if(this.goingNorth) {
 			this.goingNorth = false;
@@ -70,28 +83,20 @@ public class Farmer implements Runnable {
 	
 	//*****Thread related*****
 	
+
+	//run() - 
+	//Preconditions:
+	//Postconditions:
 	@Override
 	public void run() {
-		//RUN TEST
-		//System.out.println("RUN TEST: " + this.name + " running.....");
 		//Call to bridge , where the semaphore will be acquired and the farmers steps will be incremented
 		//passes this farmer object to the bridge that was passed as a constructor arg.
 		this.bridge.cross(this);
-		//NOTE:Old attempt. Seems to hang on sem acquire.
-		//Thread sleep (implement after 5 steps)
-//		try {
-//			System.out.println(this.name + "acquiring sem.....");
-//			bridgeSem.acquire();
-//			//TimeUnit.MILLISECONDS.sleep(2);
-//			System.out.println(this.name + "releasing sem sem.....");
-//			bridgeSem.release();
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		//System.out.println("RUN TEST: " + this.name + " finished.....");
 	}
-	
+
+	//start() - 
+	//Preconditions:
+	//Postconditions:
 	public void start() {
 		System.out.println("Starting thread: " + this.name);
 		if(t == null) {
@@ -113,7 +118,6 @@ public class Farmer implements Runnable {
 			BufferedReader bRead = new BufferedReader(fRead);
 			//NOTE: The input file for this program should only be a single line. This will simply ignore the rest, if any.
 			input = bRead.readLine();
-			//System.out.println("file read test: " + newLine);
 			bRead.close();
 			fRead.close();
 		}
@@ -125,16 +129,13 @@ public class Farmer implements Runnable {
 		}
 		//split into north and south numbers on (,)
 		String[] NS = input.split(", ");
-		//System.out.println("file read split test: " + NS[0] + NS[1]);
 		//get the int values from each with regex - sort on the N & S just incase
 		for(int i = 0; i < NS.length; i++) {
 			if(NS[i].charAt(0) == 'N' || NS[i].charAt(0) == 'n') {
 				result[0] = Integer.parseInt(NS[i].replaceAll("[^0-9]", ""));
-				//System.out.println("file read N int test: " + result[0]);
 			}
 			else {
 				result[1] = Integer.parseInt(NS[i].replaceAll("[^0-9]", ""));
-				//System.out.println("file read S int test: " + result[1]);
 			}
 		}
 			

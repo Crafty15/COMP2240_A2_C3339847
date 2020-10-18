@@ -13,18 +13,21 @@ public class Restaurant {
 	private boolean needsClean;
 	private int custsToLeave;
 
-	
+
+	//Constructor
+	//Preconditions:
+	//Postconditions:	
 	public Restaurant() {
 		//semaphore with 5 permits - NOTE: use seat.availablePermits() OR .getQueueLength() to check if full
 		seat = new Semaphore(MAXNUM, true);
 		timeControl = new Semaphore(100, true);
 		needsClean = false;
 		custsToLeave = -1;
-		//pauseTime = false;
-		//this.custTime = 0;
-		//globalTimeStamp = new Instant();
 	}
-	
+
+	//run() - 
+	//Preconditions: A Restaurant object has been instantiated. 
+	//Postconditions:	
 	public void run(Customer c) {
 		boolean pauseTime = false;
 		//while a customer has not left
@@ -79,41 +82,89 @@ public class Restaurant {
 	}
 	
 	//****Getters****
+
+	//getGlobalTime() - 
+	//Preconditions:
+	//Postconditions:
 	public int getGlobalTime() {
 		return globalTime;
 	}
-	
+
+	//needsClean() - 
+	//Preconditions:
+	//Postconditions:
 	public boolean needsClean() {
 		return this.needsClean;
 	}
+
+	//getTimeControl() - 
+	//Preconditions:
+	//Postconditions:
 	public Semaphore getTimeControl() {
 		return this.timeControl;
 	}
-	
+
+	//getSeatSeam() - 
+	//Preconditions:
+	//Postconditions:
 	public Semaphore getSeatSem() {
 		return this.seat;
 	}
-	
+
+	//getCustsToLeave() - 
+	//Preconditions:
+	//Postconditions:
 	public int getCustsToLeave() {
 		return this.custsToLeave;
 	}
+
+	//getMAXIMUM() - 
+	//Preconditions:
+	//Postconditions:
+	public int getMAXNUM() {
+		return MAXNUM;
+	}
 	
 	//****Setters****
+
+	//setGlobalTime(int) - 
+	//Preconditions:
+	//Postconditions:
 	public void setGlobalTime(int newGlobalTime) {
 		globalTime = newGlobalTime;
 	}
+
+	//incGlobalTime() - increment the global time by 1
+	//Preconditions:
+	//Postconditions:
 	public void incGlobalTime() {
 		globalTime++;
 	}	
+
+	//incGlobalTime(int) - increment the global time by the argument amount
+	//Preconditions:
+	//Postconditions:
 	public void incGlobalTime(int incAmount) {
 		globalTime += incAmount;
 	}
+
+	//setNeedsClean(boolean) - 
+	//Preconditions:
+	//Postconditions:
 	public void setNeedsClean(boolean newNeedsClean) {
 		this.needsClean = newNeedsClean;
 	}
+
+	//setCustsToLeave(int) - Used to set the 
+	//Preconditions:
+	//Postconditions:
 	public void setCustsToLeave(int newCustsToLeave) {
 		this.custsToLeave = newCustsToLeave;
 	}
+
+	//decCustsToLeave() - 
+	//Preconditions:
+	//Postconditions:
 	public void decCustsToLeave() {
 		custsToLeave--;
 	}
