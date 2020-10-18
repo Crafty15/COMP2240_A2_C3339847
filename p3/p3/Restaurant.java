@@ -45,7 +45,12 @@ public class Restaurant {
 				//take seat
 				takeSeat(c);
 			}
-			
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//if c is done
 			if(globalTime >= (c.getSeatedTime() + c.getEatTime())) {
 				//release if no clean is required

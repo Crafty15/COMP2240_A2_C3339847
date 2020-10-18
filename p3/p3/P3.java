@@ -31,12 +31,7 @@ public class P3 {
 				}
 			}		
 			try {
-				//loop for time sync reasons
-//				while(r.getTimeControl().availablePermits() != 100) {
-//					System.out.print("");
-//					Thread.sleep(1);
-//				}
-				Thread.sleep(2);			
+				Thread.sleep(60);			
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
