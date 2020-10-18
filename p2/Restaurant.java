@@ -78,7 +78,6 @@ public class Restaurant {
 			timeControl.release();
 			pauseTime = false;		
 		}
-
 	}
 	
 	//****Getters****

@@ -1,13 +1,15 @@
-//File: P2.java
-//Purpose:	Main class for part TWO of assignment 2 - Covid-safe restaurant
+//File: P3.java
+//Purpose:	Main class for part THREE of assignment 2 - Covid-safe restaurant with monitors
 //Programmer: Liam Craft - c3339847
 //Date: 13/10/2020
-//NOTE: This program takes a relative filepath to a text file as a command line argument.
+
+package p3;
 
 import java.util.ArrayList;
 
 //Main
-public class P2 {
+public class P3 {
+
 	public static void main(String[] args) {
 		//command line args for file name
 		if(args.length != 1) {
@@ -18,6 +20,7 @@ public class P2 {
 		Restaurant r = new Restaurant();
 		//create list of customers using the Customer utility method, include the restaurant object
 		ArrayList<Customer> cList = Customer.getCustList(args[0], r);
+		//*******
 		//This will run independently of customer threads, until all threads complete.
 		while(!Customer.checkAllFinished(cList)) {
 			//loop through and start customer threads on their arrival time
@@ -29,11 +32,11 @@ public class P2 {
 			}		
 			try {
 				//loop for time sync reasons
-				while(r.getTimeControl().availablePermits() != 100) {
-					System.out.print("");
-					Thread.sleep(1);
-				}
-				Thread.sleep(1);			
+//				while(r.getTimeControl().availablePermits() != 100) {
+//					System.out.print("");
+//					Thread.sleep(1);
+//				}
+				Thread.sleep(2);			
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -50,9 +53,10 @@ public class P2 {
 				//reset boolean flag
 				r.setNeedsClean(false);
 				//release all seat permits
-				r.getSeatSem().release(r.getMAXNUM());
+				r.releaseSeats();
 			}
 		}
+		
 		//Print results
 		System.out.println(Customer.getReport(cList));	
 	}
